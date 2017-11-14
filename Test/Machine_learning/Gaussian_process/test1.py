@@ -8,7 +8,7 @@ G = Gaussian_process()
 
 y = [np.random.randint(2, 20) for i in range(15)]
 x = np.linspace(0, 20, num=15)
-G.fit_noiseless(x, y)
+G.fit_noisy(x, y, 0.1)
 print(G.predict(21))
 
 

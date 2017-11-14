@@ -24,44 +24,37 @@ class Gaussian_process():
         self.no_points = len(y)
         self.K = [[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)]
 
-    def predict(self, x):
-        K = tf.Variable(self.K, dtype=tf.float64)
-        K_inverse = tf.linalg.inv(K)
-        k_ = [RBF(x, self.x[i], zigma=self.zigma, variance_weight=self.variance_weight) for i in range(self.no_points)]
-        k = tf.Variable(k_, dtype=tf.float64)
-        y = tf.Variable(self.y, dtype=tf.float64)
+    def predict(self,x):
+        K = tf.constant(self.K)
+        k = tf.constant([[RBF(x, self.x[i])] for i in range(self.no_points)])
+        y = tf.constant([[i] for i in self.y], dtype=tf.float32)
+
         try:
             L = tf.cholesky(K)
-            L_transpose = tf.transpose(L)
+            alpha = tf.matrix_triangular_solve(L, y, lower=True)
+            beta  = tf.matrix_triangular_solve(tf.transpose(L), alpha, lower=False)
+
+            m = self.mean + tf.matmul(k, beta, transpose_a=True)
+
+            gamma = tf.matrix_triangular_solve(L, k)
+            v = tf.matmul(gamma, gamma, transpose_a=True)
 
             with tf.Session() as sess:
-                sess.run(tf.global_variables_initializer())
-                L_trans = sess.run(L_transpose)
-                L_ = sess.run(L)
-
-
-            Beta = np.linalg.solve(L_, self.y)
-            Alpha = tf.Variable(np.linalg.solve(L_trans, Beta))
-            m = tf.einsum('i,i->',k, Alpha)
-            gamma = tf.Variable(np.linalg.solve(L_, k_))
-            v = self.variance_weight - tf.einsum('i,i->',gamma, gamma)
-            with tf.Session() as sess:
-                sess.run(tf.global_variables_initializer())
                 mean = sess.run(m)
-                variance = sess.run(v)
-
+                variance = self.variance_weight - sess.run(v)
             return mean, variance
-
         except:
             print("e")
-            alpha = tf.einsum('nm,m->n', K_inverse, y)
-            m = tf.einsum('i,i->', k, alpha)
+            K_inverse = tf.matrix_inverse(K)
+            alpha = tf.matmul(K_inverse, y)
+            beta = tf.matmul(k, alpha, transpose_a=True)
 
-            v = self.variance_weight - tf.einsum('i,i->', tf.einsum('n,nm->m', k, K_inverse), k)
+            gamma = tf.matmul(K_inverse, k)
+            v = tf.matmul(k, gamma, transpose_a=True)
+
             with tf.Session() as sess:
-                sess.run(tf.global_variables_initializer())
-                mean = sess.run(m)
-                variance = sess.run(v)
+                mean = self.mean + sess.run(beta)
+                variance = self.variance_weight - sess.run(v)
 
             return mean, variance
 

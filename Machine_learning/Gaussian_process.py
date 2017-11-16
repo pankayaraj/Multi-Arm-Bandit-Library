@@ -5,7 +5,7 @@ from Kernals.RBF import RBF
 #Solving is done on numpy try to do it in tensorflow
 
 class Gaussian_process():
-    def __init__(self):
+    def __init__(self, datatype = tf.float64):
         self.y = None
         self.x = None
         self.zigma = None
@@ -13,29 +13,30 @@ class Gaussian_process():
         self.no_points = None
         self.K = None
         self.variance_weight = 1
+        self.datatype = datatype
 
 
     def fit_noiseless(self, x, y, mean =0, zigma = 1, variance_weight = 1):
         self.x = x
-        self.y = tf.constant([[i] for i in y], dtype=tf.float32)
+        self.y = tf.constant([[i] for i in y], dtype=self.datatype)
         self.zigma = zigma
         self.variance_weight = variance_weight
         self.mean = mean
         self.no_points = len(y)
-        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)])
+        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)], dtype=self.datatype)
 
     def fit_noisy(self, x, y, noise, mean =0, zigma = 1, variance_weight = 1):
         self.x = x
-        self.y = tf.constant([[i] for i in y], dtype=tf.float32)
+        self.y = tf.constant([[i] for i in y], dtype=self.datatype)
         self.zigma = zigma
         self.variance_weight = variance_weight
         self.mean = mean
         self.no_points = len(y)
-        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)]) + noise*tf.eye(self.no_points)
+        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)], dtype=self.datatype) + noise*tf.eye(self.no_points, self.datatype)
 
     def predict(self,x):
 
-        k = tf.constant([[RBF(x, self.x[i])] for i in range(self.no_points)])
+        k = tf.constant([[RBF(x, self.x[i])] for i in range(self.no_points)], dtype=self.datatype)
 
 
         try:

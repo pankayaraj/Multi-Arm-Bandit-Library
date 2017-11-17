@@ -1,11 +1,7 @@
-import tensorflow as tf
+from Multi_arm_bandit_algorithms.Baysian_optimization.Explore_exploit_tradeoff import  Explore_exploit_tradeoff
 
-x = tf.Variable(200, dtype=tf.float32)
-opt = tf.train.GradientDescentOptimizer(5)
-train = opt.minimize(x)
+X = [-5, -2, -1, 1, 2, 5]
+Y = [-i**2 for i in X]
 
-with tf.Session() as sess:
-    sess.run(tf.global_variables_initializer())
-    for i in range(100):
-        sess.run(train)
-        print(sess.run(x))
+print(Explore_exploit_tradeoff(X, Y, lower_bound=-7, upper_bound=7, tradeoff_factor=100))
+

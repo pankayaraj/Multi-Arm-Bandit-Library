@@ -6,10 +6,12 @@ import time
 t = time.time()
 G = Gaussian_process()
 
-x = [1,2,3]
-y = [3, 10, 2]
-G.fit_noiseless(x, y)
-print(G.predict(1.5))
+x= [-3, -2, 4]
+y= [9, 4, 16]
+G.fit_noisy(x, y, noise=0.01)
+for i in range(-10, 10):
+    print(i)
+    print(G.predict(i))
 
 
 

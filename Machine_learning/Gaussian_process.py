@@ -32,7 +32,7 @@ class Gaussian_process():
         self.variance_weight = variance_weight
         self.mean = mean
         self.no_points = len(y)
-        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)], dtype=self.datatype) + noise*tf.eye(self.no_points, self.datatype)
+        self.K = tf.constant([[RBF(x[i], x[j]) for j in range(self.no_points)] for i in range(self.no_points)], dtype=self.datatype) + noise*tf.linalg.eye(self.no_points, dtype=self.datatype)
 
     def predict(self,x):
 

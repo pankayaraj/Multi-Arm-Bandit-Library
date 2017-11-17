@@ -1,7 +1,7 @@
 import sklearn.gaussian_process as gp
 import time
 import numpy as np
-
+import matplotlib.pyplot as plt
 t = time.time()
 
 
@@ -16,3 +16,10 @@ model.fit(x, y)
 print(model.predict(21, return_std=True))
 
 print(time.time()-t)
+
+
+X = np.linspace(-100, 100, 200)
+Y = [x**3 - 2*x + 3*x**2 for x in X]
+
+plt.plot(X,Y)
+plt.show()

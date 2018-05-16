@@ -1,0 +1,17 @@
+Metadata-Version: 1.1
+Name: mabandit
+Version: 1.3
+Summary: A library for mutliarm bandit problem
+Home-page: https://github.com/punk95/Multi-Arm-Bandit-Library
+Author: Pankayaraj
+Author-email: pankayaraj1995@gmail.com
+License: UNKNOWN
+Description: UNKNOWN
+Keywords: mabandit,pypi,package
+Platform: UNKNOWN
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
